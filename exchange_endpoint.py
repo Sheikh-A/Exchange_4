@@ -117,19 +117,20 @@ def trade():
     if request.method == "POST":
         content = request.get_json(silent=True)
         print( f"content = {json.dumps(content)}" )
-        columns = [ "sender_pk", "receiver_pk", "buy_currency", "sell_currency", "buy_amount", "sell_amount", "platform" ]
-        fields = [ "sig", "payload" ]
+        d_columns = [ "sender_pk", "receiver_pk", "buy_currency", "sell_currency", "buy_amount", "sell_amount", "platform" ]
+        data_fields = [ "sig", "payload" ]
 
-        for field in fields:
-            if not field in content.keys():
-                print( f"{field} not received by Trade" )
+        for datafield in data_fields:
+            if not datafield in content.keys():
+
+                
                 print( json.dumps(content) )
+                
                 log_message(content)
                 return jsonify( False )
 
-        for column in columns:
-            if not column in content['payload'].keys():
-                print( f"{column} not received by Trade" )
+        for data in d_columns:
+            if not data in content['payload'].keys():
                 print( json.dumps(content) )
                 log_message(content)
                 return jsonify( False )
