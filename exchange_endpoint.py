@@ -185,13 +185,18 @@ def order_book():
     
     for order in orders:
         currentdata = {}
-        currentdata['sender_pk'] = order.sender_pk
-        currentdata['receiver_pk'] = order.receiver_pk
+        currentdata['signature'] = order.signature
+        
         currentdata['buy_currency'] = order.buy_currency
         currentdata['sell_currency'] = order.sell_currency
+
+        currentdata['sender_pk'] = order.sender_pk
+        currentdata['receiver_pk'] = order.receiver_pk
+        
+        
         currentdata['buy_amount'] = order.buy_amount
         currentdata['sell_amount'] = order.sell_amount
-        currentdata['signature'] = order.signature
+        
         datalist.append(currentdata)
     act_result['data'] = datalist
     #Note that you can access the database session using g.session
