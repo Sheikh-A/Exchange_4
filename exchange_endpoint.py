@@ -135,13 +135,14 @@ def trade():
                 log_message(content)
                 return jsonify( False )
 
-        #Your code here
-        #Note that you can access the database session using g.session
         sig = content["sig"]
+        
         pk = content["payload"]["sender_pk"]
+        
         msg = json.dumps(content["payload"])
         platform = content["payload"]["platform"]
         result = True
+        
         if platform == 'Ethereum':
             eth_encoded_msg = eth_account.messages.encode_defunct(text=msg)
             if eth_account.Account.recover_message(eth_encoded_msg,signature=sig) == pk:
@@ -154,14 +155,16 @@ def trade():
             else:
                 result = False
         if result == True:
-            order = {}
-            order['sender_pk'] = content["payload"]["sender_pk"]
-            order['receiver_pk'] = content["payload"]["receiver_pk"]
-            order['buy_currency'] = content["payload"]["buy_currency"]
-            order['sell_currency'] = content["payload"]["sell_currency"]
-            order['buy_amount'] = content["payload"]["buy_amount"]
-            order['sell_amount'] = content["payload"]["sell_amount"]
-            order_obj = Order( sender_pk=order['sender_pk'],receiver_pk=order['receiver_pk'], buy_currency=order['buy_currency'], sell_currency=order['sell_currency'], buy_amount=order['buy_amount'], sell_amount=order['sell_amount'] )
+            order_dict = {}
+            
+            order_dict['sender_pk'] = content["payload"]["sender_pk"]
+            order_dict['receiver_pk'] = content["payload"]["receiver_pk"]
+            
+            order_dict['buy_currency'] = content["payload"]["buy_currency"]
+            order_dict['sell_currency'] = content["payload"]["sell_currency"]
+            order_dict['buy_amount'] = content["payload"]["buy_amount"]
+            order_dict['sell_amount'] = content["payload"]["sell_amount"]
+            order_obj = Order( sender_pk=order_dict['sender_pk'],receiver_pk=order_dict['receiver_pk'], buy_currency=order_dict['buy_currency'], sell_currency=order_dict['sell_currency'], buy_amount=order_dict['buy_amount'], sell_amount=order_dict['sell_amount'] )
             g.session.add(order_obj)
             g.session.commit()
         else:
@@ -175,23 +178,24 @@ def trade():
 
 @app.route('/order_book')
 def order_book():
-    #Your code here
     orders = g.session.query(Order)
-    result = {}
-    list = []
+    datalist = []
+
+    act_result = {}
+    
     for order in orders:
-        cur = {}
-        cur['sender_pk'] = order.sender_pk
-        cur['receiver_pk'] = order.receiver_pk
-        cur['buy_currency'] = order.buy_currency
-        cur['sell_currency'] = order.sell_currency
-        cur['buy_amount'] = order.buy_amount
-        cur['sell_amount'] = order.sell_amount
-        cur['signature'] = order.signature
-        list.append(cur)
-    result['data'] = list
+        currentdata = {}
+        currentdata['sender_pk'] = order.sender_pk
+        currentdata['receiver_pk'] = order.receiver_pk
+        currentdata['buy_currency'] = order.buy_currency
+        currentdata['sell_currency'] = order.sell_currency
+        currentdata['buy_amount'] = order.buy_amount
+        currentdata['sell_amount'] = order.sell_amount
+        currentdata['signature'] = order.signature
+        datalist.append(currentdata)
+    act_result['data'] = datalist
     #Note that you can access the database session using g.session
-    return jsonify(result)
+    return jsonify(act_result)
 
 if __name__ == '__main__':
     app.run(port='5002')
