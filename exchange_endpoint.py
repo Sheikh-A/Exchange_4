@@ -46,14 +46,16 @@ def fill_order(order,txes=[]):
     session.commit()
 
     full_order_list = session.query(Order).filter(Order.filled == None).filter(Order.buy_currency == order.sell_currency).filter(Order.sell_currency == order.buy_currency).all()
-    id = -1
+    #Set Rate
     rate = 0
-
-    for candidate in full_order_list:
-        new_rate = candidate.sell_amount / candidate.buy_amount
+    #SET ID
+    id = -1
+    
+    for order_num in full_order_list:
+        new_rate = order_num.sell_amount / order_num.buy_amount
         if new_rate > rate:
             rate = new_rate
-            id = candidate.id
+            id = order_num.id
 
     if id != -1 and rate >= order.buy_amount / order.sell_amount:
         other = session.query(Order).get(id)
