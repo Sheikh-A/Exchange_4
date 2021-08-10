@@ -35,10 +35,10 @@ def check_sig(payload,sig):
     pass
 
 def fill_order(order,txes=[]):
-    order_obj = Order( sender_pk=order['sender_pk'],receiver_pk=order['receiver_pk'], buy_currency=order['buy_currency'], sell_currency=order['sell_currency'], buy_amount=order['buy_amount'], sell_amount=order['sell_amount'] )
+    object_order = Order( sender_pk=order['sender_pk'],receiver_pk=order['receiver_pk'], buy_currency=order['buy_currency'], sell_currency=order['sell_currency'], buy_amount=order['buy_amount'], sell_amount=order['sell_amount'] )
     if 'creator_id' in order.keys():
-        order_obj.creator_id = order['creator_id']
-    order = order_obj
+        object_order.creator_id = order['creator_id']
+    order = object_order
     session.add(order)
     session.commit()
 
