@@ -36,17 +36,20 @@ def check_sig(payload,sig):
 
 def fill_order(order,txes=[]):
     object_order = Order( sender_pk=order['sender_pk'],receiver_pk=order['receiver_pk'], buy_currency=order['buy_currency'], sell_currency=order['sell_currency'], buy_amount=order['buy_amount'], sell_amount=order['sell_amount'] )
+    
     if 'creator_id' in order.keys():
         object_order.creator_id = order['creator_id']
     order = object_order
+    #ADD
     session.add(order)
+    #COMMIT
     session.commit()
 
-    orders = session.query(Order).filter(Order.filled == None).filter(Order.buy_currency == order.sell_currency).filter(Order.sell_currency == order.buy_currency).all()
+    full_order_list = session.query(Order).filter(Order.filled == None).filter(Order.buy_currency == order.sell_currency).filter(Order.sell_currency == order.buy_currency).all()
     id = -1
     rate = 0
 
-    for candidate in orders:
+    for candidate in full_order_list:
         new_rate = candidate.sell_amount / candidate.buy_amount
         if new_rate > rate:
             rate = new_rate
